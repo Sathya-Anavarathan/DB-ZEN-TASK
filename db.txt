@@ -1,0 +1,137 @@
+//Attendence
+db["attendance"].find()
+{
+  _id: ObjectId('68f323748e598de3f54f0261'),
+  user_id: ObjectId('67120a100001000000000006'),
+  date: 2020-10-18T00:00:00.000Z,
+  status: 'Absent'
+}
+{
+  _id: ObjectId('68f323748e598de3f54f0262'),
+  user_id: ObjectId('67120a100001000000000007'),
+  date: 2020-10-19T00:00:00.000Z,
+  status: 'Present'
+}
+{
+  _id: ObjectId('68f323748e598de3f54f0263'),
+  user_id: ObjectId('67120a100001000000000008'),
+  date: 2020-10-20T00:00:00.000Z,
+  status: 'Absent'
+}
+{
+  _id: ObjectId('68f323748e598de3f54f0264'),
+  user_id: ObjectId('67120a100001000000000001'),
+  date: 2020-10-21T00:00:00.000Z,
+  status: 'Absent'
+}
+{
+  _id: ObjectId('68f323748e598de3f54f0265'),
+  user_id: ObjectId('67120a100001000000000002'),
+  date: 2020-10-22T00:00:00.000Z,
+  status: 'Present'
+}
+{
+  _id: ObjectId('68f323748e598de3f54f0266'),
+  user_id: ObjectId('67120a100001000000000003'),
+  date: 2020-10-23T00:00:00.000Z,
+  status: 'Absent'
+}
+{
+  _id: ObjectId('68f323748e598de3f54f0267'),
+  user_id: ObjectId('67120a100001000000000004'),
+  date: 2020-10-24T00:00:00.000Z,
+  status: 'Present'
+}
+
+//Find all the topics and tasks which are thought in the month of October
+//topics
+db.topics.find({
+  date: {
+    $gte: ISODate("2020-10-01T00:00:00.000Z"),
+    $lte: ISODate("2020-10-31T23:59:59.999Z")
+  }
+});
+{
+  _id: ObjectId('68f3245a8e598de3f54f026f'),
+  topic_name: 'MongoDB Introduction',
+  date: 2020-10-27T00:00:00.000Z,
+  description: 'Understanding collections, documents, and CRUD operations.'
+}
+{
+  _id: ObjectId('68f3245a8e598de3f54f026e'),
+  topic_name: 'Express.js Framework',
+  date: 2020-10-23T00:00:00.000Z,
+  description: 'Setting up a REST API using Express.js.'
+}
+{
+  _id: ObjectId('68f3245a8e598de3f54f026d'),
+  topic_name: 'Node.js Basics',
+  date: 2020-10-20T00:00:00.000Z,
+  description: 'Introduction to Node.js and building simple backend applications.'
+}
+{
+  _id: ObjectId('68f3245a8e598de3f54f026c'),
+  topic_name: 'ES6 Features',
+  date: 2020-10-17T00:00:00.000Z,
+  description: 'Learning arrow functions, template literals, and destructuring.'
+}
+//tasks
+db.tasks.find({
+  date: {
+    $gte: ISODate("2020-10-01T00:00:00.000Z"),
+    $lte: ISODate("2020-10-31T23:59:59.999Z")
+  }
+});
+
+// company drives
+db.company_drives.find({
+  drive_date: {
+    $gte: ISODate("2020-10-15T00:00:00.000Z"),
+    $lte: ISODate("2020-10-31T23:59:59.999Z")
+  }
+});
+
+// Find all the company drives and students who are appeared for the placement.
+db.company_drives.aggregate([
+  {
+    $lookup: {
+      from: "users",
+      localField: "appeared_students",
+      foreignField: "_id",
+      as: "students_appeared"
+    }
+  }
+]);
+
+
+/ Find the number of problems solved by the user in codekata
+db.codekata.find({}, { user_id: 1, problems_solved: 1, _id: 0 });
+
+
+db.codekata.aggregate([
+  {
+    $group: {
+      _id: null,
+      total_problems_solved: { $sum: "$problems_solved" }
+    }
+  }
+]);
+db.codekata.aggregate([
+  {
+    $group: {
+      _id: null,
+      total_problems_solved: { $sum: "$problems_solved" }
+    }
+  }
+]);
+
+/ Find the number of users who are absent and task is not submitted  between 15 oct-2020 and 31-oct-2020
+
+db.attendance.find({}, { user_id: 1 })
+db.tasks.find({}, { not_submitted_by: 1 })
+
+//BY 
+db.attendance.find({
+  status: "Absent",
+  date: { $gte: ISODate("2020-10-15"), $lte: ISODate("2020-10-31") }
+})
